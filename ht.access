@@ -11,6 +11,15 @@ Options +FollowSymlinks
 RewriteEngine On
 RewriteBase /
 
+# Deny access to git
+RewriteRule \.git - [F,L]
+
+# Deny access to any sql file
+<Files ~ "\.sql$">
+Order allow,deny
+Deny from all
+</Files>
+
 # Fix Apache internal dummy connections from breaking [(site_url)] cache
 RewriteCond %{HTTP_USER_AGENT} ^.*internal\ dummy\ connection.*$ [NC]
 RewriteRule .* - [F,L]
