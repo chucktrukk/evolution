@@ -87,11 +87,13 @@ class DBAPI {
       $connection_method = $this->config['connection_method'];
       $tstart = $modx->getMicroTime();
       if (!$this->conn = ($persist ? mysql_pconnect($host, $uid, $pwd) : mysql_connect($host, $uid, $pwd, true))) {
+         die('Failed to create the database connection!');
          $modx->messageQuit("Failed to create the database connection!");
          exit;
       } else {
          $dbase = str_replace('`', '', $dbase); // remove the `` chars
          if (!@ mysql_select_db($dbase, $this->conn)) {
+            die("Failed to select the database '" . $dbase . "'!");
             $modx->messageQuit("Failed to select the database '" . $dbase . "'!");
             exit;
          }
