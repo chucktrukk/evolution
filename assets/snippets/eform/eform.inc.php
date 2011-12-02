@@ -1050,6 +1050,18 @@ function filterEformValue($value,$param){
 
 	function efLoadTemplate($key){
 		global $modx;
+    
+    $fpos = strpos($key, '@FILE');
+    if ($fpos !== false) {
+      $file = $modx->config['base_path'].trim(substr($key, $fpos+5));
+		  if( is_readable($file) )
+		  {
+		    return file_get_contents($file);
+		  } else {
+		    echo 'File is not readable ';
+		  }
+		}
+
 		if( strlen($key)>50 ) return $key;
 		$tpl = false;
 		if( is_numeric($key) ) { //get from document id
