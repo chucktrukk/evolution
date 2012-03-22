@@ -102,6 +102,10 @@ if(empty($rb_base_url_parse['host'])){
     	$baseurl = $site_url.$rb_base_url;        
     }
 }
+
+/* Custom base_url folders */
+include_once dirname(__FILE__).'/config_custom_base_url.php';
+
 /*------------------------------------------------------------------------------*/
 /* The physical path to the document root, Set manually if not using apache	*/
 /*------------------------------------------------------------------------------*/
