@@ -12,21 +12,37 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 //define('MODX_BASE_PATH', dirname(__FILE__).'/' );
-define('MODX_BASE_PATH', '../../../..');
+define('MODX_BASE_PATH', '../../../../');
 
-require_once MODX_BASE_PATH.'/manager/includes/config.inc.php';
-require_once MODX_BASE_PATH.'/manager/includes/document.parser.class.inc.php';
-require_once MODX_BASE_PATH.'/MODxAPI.class.php';
+require_once MODX_BASE_PATH.'manager/includes/config.inc.php';
+require_once MODX_BASE_PATH.'manager/includes/document.parser.class.inc.php';
+require_once MODX_BASE_PATH.'MODxAPI.class.php';
 $modx = new MODxAPI();
 $modx->connect();
-$modx->startSession();
+
+		session_name($site_sessionname);
+		session_start();
+		$cookieExpiration= 0;
+        if (isset ($_SESSION['mgrValidated']) || isset ($_SESSION['webValidated'])) {
+            $contextKey= isset ($_SESSION['mgrValidated']) ? 'mgr' : 'web';
+            if (isset ($_SESSION['modx.' . $contextKey . '.session.cookie.lifetime']) && is_numeric($_SESSION['modx.' . $contextKey . '.session.cookie.lifetime'])) {
+                $cookieLifetime= intval($_SESSION['modx.' . $contextKey . '.session.cookie.lifetime']);
+            }
+            if ($cookieLifetime) {
+                $cookieExpiration= time() + $cookieLifetime;
+            }
+			if (!isset($_SESSION['modx.session.created.time'])) {
+			  $_SESSION['modx.session.created.time'] = time();
+			}
+        }
+		setcookie(session_name(), session_id(), $cookieExpiration, MODX_BASE_URL);
 
 if(!defined('APP_PATH')) {
-    DEFINE('APP_PATH', MODX_BASE_PATH.'_/');
+    DEFINE('APP_PATH', MODX_BASE_PATH.'/_/');
 }
 
 if(!defined('VENDOR_PATH')) {
-    DEFINE('VENDOR_PATH', APP_PATH.'vendors/');
+    DEFINE('VENDOR_PATH', APP_PATH.'/vendors/');
 }
 
 require_once APP_PATH.'global/App.php';
@@ -36,8 +52,8 @@ $modx->getSettings();
 
 // Override system settings with user settings
 define('IN_MANAGER_MODE', 'true'); // set this so that user_settings will trust us.
-include MODX_BASE_PATH . '/manager/includes/settings.inc.php';
-include MODX_BASE_PATH . '/manager/includes/user_settings.inc.php';
+include MODX_BASE_PATH . 'manager/includes/settings.inc.php';
+include MODX_BASE_PATH . 'manager/includes/user_settings.inc.php';
 
 if($settings['use_browser'] != 1){
 	die("<b>PERMISSION DENIED</b><br /><br />You do not have permission to access this file!");
